@@ -1,20 +1,17 @@
-local inputBools = {}
+inputBools = {}
 inputFloats = {}
+outputBools = {}
+outputFloats = {}
 
 for i=1,32,1 do
 	table.insert(inputBools, false)
 	table.insert(inputFloats, 0.0)
+	table.insert(outputBools, false)
+	table.insert(outputFloats, 0.0)
 end
 
 function onTick()
-    getInput('booleans', '1')
-    getInput('floats', '1')
-    
-    print(inputBools[1])
-    print(inputFloats[1])
-    
-    output.setBool(1, inputBools[1])
-    output.setNumber(1, inputFloats[1])
+    getOutput("booleans", 1)
 end
 
 function onDraw()
@@ -23,6 +20,13 @@ end
 
 function getInput(type, index)
 	async.httpGet(3000, "/inData?type="..type.."&index="..index)	
+end
+function getOutput(type, index)
+	async.httpGet(3000, "/outData?type="..type.."&index="..index)	
+end
+
+function setInput(type, index, value)
+	async.httpGet(3000, "/inData?setValue=true&type="..type.."&index="..index)	
 end
 
 function setOutput(type, index, value)
@@ -48,8 +52,6 @@ function split (inputstr, sep)
 end
 
 function httpReply(port, request_body, response_body)
-	--print(request_body)
-	--print(response_body)
     if string.find(request_body, "inData") ~= nil then
     	if string.find(request_body, "type=booleans") ~= nil then
     		index = tonumber(split(split(request_body, "&")[2], "=")[2])
@@ -63,10 +65,17 @@ function httpReply(port, request_body, response_body)
     		inputFloats[index] = tonumber(response_body)
     	end
     elseif string.find(request_body, 'outData') ~= nil then
-    	--print("httpReply is from an outData request")
-    else
-    	--print("Error: httpReply is not recognized")
+    	if string.find(request_body, "type=booleans") ~= nil then
+    		index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		if response_body == "true" then
+    			outputBools[index] = true
+    		else
+    			outputBools[index] = false
+    		end
+    	elseif string.find(request_body, "type=floats") ~= nil then
+    		index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		outputFloats[index] = tonumber(response_body)
+    	end
+    
     end
-    --print(index)
-    --print(inputBools[index])
 end
