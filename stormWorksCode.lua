@@ -27,10 +27,28 @@ function getOutput(type, index)
 end
 
 function setInput(type, index, value)
-	async.httpGet(3000, "/inData?setValue=true&type="..type.."&index="..index)	
+
+	if type == "booleans" then
+		if value then
+			formattedValue = true
+		else
+			formattedValue = false
+		end
+	end
+
+	async.httpGet(3000, "/inData?setValue=true&type="..type.."&index="..index.."&value="..formattedValue)	
 end
 
 function setOutput(type, index, value)
+
+	if type == "booleans" then
+		if value then
+			formattedValue = true
+		else
+			formattedValue = false
+		end
+	end
+	
 	async.httpGet(3000, "/outData?setValue=true&type="..type.."&index="..index.."&value="..value)	
 end
 
