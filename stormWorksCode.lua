@@ -11,7 +11,8 @@ for i=1,32,1 do
 end
 
 function onTick()
-    getOutput("booleans", 1)
+    setOutput("booleans", 1, "false")
+    setOutput("floats", 1, 0)
 end
 
 function onDraw()
@@ -54,26 +55,42 @@ end
 function httpReply(port, request_body, response_body)
     if string.find(request_body, "inData") ~= nil then
     	if string.find(request_body, "type=booleans") ~= nil then
-    		index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		if string.find(request_body, "setValue=true") ~= nil then
+    			index = tonumber(split(split(request_body, "&")[3], "=")[2])
+    		else
+    			index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		end
     		if response_body == "true" then
     			inputBools[index] = true
     		else
     			inputBools[index] = false
     		end
     	elseif string.find(request_body, "type=floats") ~= nil then
-    		index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		if string.find(request_body, "setValue=true") ~= nil then
+    			index = tonumber(split(split(request_body, "&")[3], "=")[2])
+    		else
+    			index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		end
     		inputFloats[index] = tonumber(response_body)
     	end
     elseif string.find(request_body, 'outData') ~= nil then
     	if string.find(request_body, "type=booleans") ~= nil then
-    		index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		if string.find(request_body, "setValue=true") ~= nil then
+    			index = tonumber(split(split(request_body, "&")[3], "=")[2])
+    		else
+    			index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		end
     		if response_body == "true" then
     			outputBools[index] = true
     		else
     			outputBools[index] = false
     		end
     	elseif string.find(request_body, "type=floats") ~= nil then
-    		index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		if string.find(request_body, "setValue=true") ~= nil then
+    			index = tonumber(split(split(request_body, "&")[3], "=")[2])
+    		else
+    			index = tonumber(split(split(request_body, "&")[2], "=")[2])
+    		end
     		outputFloats[index] = tonumber(response_body)
     	end
     
