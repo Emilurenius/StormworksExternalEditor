@@ -4,6 +4,9 @@ const app = express()
 const path = require('path')
 const fs = require('fs')
 const cors = require('cors')
+const axios = require('axios')
+
+const targetIP = '192.168.50.246'
 
 let scriptINdata = {
     'booleans': [],
@@ -70,5 +73,10 @@ app.get('/outData', (req, res) => {
 
     res.send(scriptOUTdata[req.query.type][parseInt(req.query.index) - 1])
 })
+
+setInterval(() => {
+    console.log("updating target server")
+    axios.get(`http://${targetIP}:3000/outData?setValue=true&type=booleans&index=1&value=true`)
+}, 16)
 
 app.listen(port, () => console.log(`Listening on ${port}`))
