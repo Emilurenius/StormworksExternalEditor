@@ -3,6 +3,11 @@ inputFloats = {}
 outputBools = {}
 outputFloats = {}
 
+usedInBools = {}
+usedInFloats = {}
+usedOutBools = {}
+usedOutFloats = {}
+
 for i=1,32,1 do
 	table.insert(inputBools, false)
 	table.insert(inputFloats, 0.0)
@@ -11,12 +16,19 @@ for i=1,32,1 do
 end
 
 function onTick()
-    setOutput("booleans", 1, "false")
-    setOutput("floats", 1, 0)
-end
+    for i=1,i<len(usedInBools),1 do
+		setInput("booleans", usedInBools[i], input.getBool(usedInBools[i]))
+	end
+	for i=1,i<len(usedInFloats),1 do
+		setInput("floats", usedInFloats[i], input.getNumber(usedInFloats[i]))
+	end
 
-function onDraw()
-    -- your code
+	for i=1,i<len(usedOutBools),1 do
+		getOutput("booleans", usedOutBools[i])
+	end
+	for i=1,i<len(usedOutFloats),1 do
+		getOutput("floats", usedOutFloats[i])
+	end
 end
 
 function getInput(type, index)
@@ -48,15 +60,8 @@ function setOutput(type, index, value)
 			formattedValue = false
 		end
 	end
-	
-	async.httpGet(3000, "/outData?setValue=true&type="..type.."&index="..index.."&value="..value)	
-end
 
-function updateInputVals()
-	for i=1,32,1 do
-		getInput('booleans', i)
-		getInput('floats', i)
-	end
+	async.httpGet(3000, "/outData?setValue=true&type="..type.."&index="..index.."&value="..value)	
 end
 
 function split (inputstr, sep)
